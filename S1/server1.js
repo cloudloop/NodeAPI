@@ -25,6 +25,20 @@ const fetchWeatherData = async (lat, lon) => {
     }
 };
 
+app.get('/api/weather/latlon/:lat/:lon', async (req, res) => {
+    try {
+        const { lat, lon } = req.params;
+        const weatherData = await fetchWeatherData(lat, lon);
+        if (weatherData) {
+            res.json({ latitude: lat, longitude: lon, weatherData });
+        } else  {
+            res.status(500).json({ message: 'Error fetching weather data' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching weather data', error: error.message });
+    }
+});
+
 app.get('/api/weather/place/:place', async (req, res) => {
     try {
         const place = req.params.place;
