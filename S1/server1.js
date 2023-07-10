@@ -8,6 +8,9 @@ const port = 3000;
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, '../public')));
 
+// Set EJS as the template engine
+app.set('view engine', 'ejs');
+
 // Set Express to pretty-print JSON
 app.set('json spaces', 2);
 
@@ -37,7 +40,8 @@ app.get('/api/weather/latlon/:lat/:lon', async (req, res) => {
         const { lat, lon } = req.params;
         const weatherData = await fetchWeatherData(lat, lon);
         if (weatherData) {
-            res.json({ latitude: lat, longitude: lon, weatherData });
+            res.render('weather_index', { times: response.data.weatherData.properties.timeseries, response: response.data  });
+            //res.json({ latitude: lat, longitude: lon, weatherData });
         } else  {
             res.status(500).json({ message: 'Error fetching weather data' });
         }
@@ -67,7 +71,8 @@ app.get('/api/weather/place/:place', async (req, res) => {
 
             const weatherData = await fetchWeatherData(lat, lon);
             if (weatherData) {
-                res.json({ latitude: lat, longitude: lon, weatherData });
+                res.render('weather_index', { times: response.data.weatherData.properties.timeseries, response: response.data  });
+                //res.json({ latitude: lat, longitude: lon, weatherData });
             } else {
                 res.status(500).json({ message: 'Error fetching weather data' });
             }
