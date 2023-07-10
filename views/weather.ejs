@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .weather-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .weather-container h2 {
+            margin: 0 0 10px;
+        }
+        .weather-container p {
+            margin: 0 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Weather Information <%= response.latitude %> <%= response.longitude %> (Place name) </h1>
+    <% times.forEach(item => { %>
+        <div class="weather-container">
+            <h2>Time: <%= item.time %></h2>
+            <p>Air Pressure at Sea Level: <%= item.data.instant.details.air_pressure_at_sea_level %> hPa</p>
+            <p>Air Temperature: <%= item.data.instant.details.air_temperature %> Celsius</p>
+            <p>Cloud Area Fraction: <%= item.data.instant.details.cloud_area_fraction %> %</p>
+            <p>Relative Humidity: <%= item.data.instant.details.relative_humidity %> %</p>
+            <p>Wind From Direction: <%= item.data.instant.details.wind_from_direction %> Degrees</p>
+            <p>Wind Speed: <%= item.data.instant.details.wind_speed %> m/s</p>
+        </div>
+    <% }); %>
+</body>
+</html>

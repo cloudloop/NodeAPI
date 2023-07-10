@@ -6,11 +6,18 @@ const port = 4000;
 // Set Express to pretty-print JSON
 app.set('json spaces', 2);
 
+// Set EJS as the template engine
+app.set('view engine', 'ejs');
+
 app.get('/api/call-server1', async (req, res) => {
     try {
-        const response = await axios.get('http://localhost:3000/api/weather/latlon/10/10');
-        console.log(response.data.weatherData.properties);
-        res.json({ message: 'Received from Server 1:', data: response.data });
+        const response = await axios.get('http://localhost:3000/api/weather/place/Stockholm');
+        console.log(response.data.weatherData.properties.timeseries);
+        // res.json({ message: 'Received from Server 1:', data: response.data });
+
+        // Render the EJS template with the data
+        res.render('weather', { times: response.data.weatherData.properties.timeseries, response: response.data  });
+
     } catch (error) {
         res.status(500).json({ message: 'Error calling Server 1', error: error.response.data });
     }

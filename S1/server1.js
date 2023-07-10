@@ -45,8 +45,12 @@ app.get('/api/weather/latlon/:lat/:lon', async (req, res) => {
 });
 
 app.get('/api/weather/place/:place', async (req, res) => {
+    
     try {
-        const place = req.params.place;
+        let place = req.params.place;
+        if (place == "Schweitzerbadet") {
+            place = "Dalarö"
+        }
         const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
 
         const response = await axios.get(`https://nominatim.openstreetmap.org/search?city=${place}&format=json`, {
@@ -66,8 +70,25 @@ app.get('/api/weather/place/:place', async (req, res) => {
                 res.status(500).json({ message: 'Error fetching weather data' });
             }
         } else {
+            //try {
+                // console.log(`${place}`)
+                // console.log(`${userAgent}`)
+                // const response2 = await axios.get(`https://nominatim.openstreetmap.org/search?amenity=${place}&format=json`, {
+                //     headers: {
+                //         'User-Agent': userAgent
+                //     }
+                // });
+                // console.log(response2.data)
+                // //if (response2.data && response2.data.length > 0) {
+                //     console.log(response2.data)
+                //     let lat = parseFloat(response2.data[0].lat).toFixed(2);
+                //     let lon = parseFloat(response2.data[0].lon).toFixed(2);
+                    //const weatherData = await fetchWeatherData(lat, lon);
+            //}
+            //catch (e) {
             res.status(404).json({ message: 'No results found' });
         }
+        //}
     } catch (error) {
         res.status(500).json({ message: 'Error fetching geocoding data', error: error.message });
     }
