@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <!-- Remember to include Tailwind CSS -->
-    <link rel="stylesheet" type="text/css" href="/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+    <link rel="stylesheet" href="/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
     <title>Adventurous Weather App</title>
 </head>
 <body class="bg-sky-blue text-stormy-grey min-h-screen">
@@ -13,21 +16,19 @@
         <form id="location-form">
             <!-- Input for location goes here -->
         </form>
-        <section id="weather-info">
-            <!-- Weather info goes here -->
+        <div class="container">
             <h1>Weather Information <%= response.latitude %> <%= response.longitude %> (Place name) </h1>
             <% times.forEach(item => { %>
-                <div class="weather-container">
+                <div class="row">
                     <h2>Time: <%= item.time %></h2>
                     <p>Air Pressure at Sea Level: <%= item.data.instant.details.air_pressure_at_sea_level %> hPa</p>
                     <p>Air Temperature: <%= item.data.instant.details.air_temperature %> Celsius</p>
                     <p>Cloud Area Fraction: <%= item.data.instant.details.cloud_area_fraction %> %</p>
                     <p>Relative Humidity: <%= item.data.instant.details.relative_humidity %> %</p>
-                    <p>Wind From Direction: <%= item.data.instant.details.wind_from_direction %> Degrees</p>
-                    <p>Wind Speed: <%= item.data.instant.details.wind_speed %> m/s</p>
+                    <p>Winds: <img src="/arrow.png" style="width: 30px; height: 30px; transform: rotate(<%= item.data.instant.details.wind_from_direction + 90 %>deg);" alt="Wind direction"> <%= item.data.instant.details.wind_from_direction %>° @ <%= item.data.instant.details.wind_speed %> m/s</p>
                 </div>
             <% }); %>
-        </section>
+        </div>
         <div id="loading" class="hidden">
             <!-- Loading spinner goes here -->
             <div class="w-16 h-16 border-t-4 border-sunset-orange rounded-full animate-spin"></div>
@@ -36,5 +37,28 @@
     <div id="error" class="hidden bg-sunset-orange text-white p-4">
         Oops! Something went wrong.
     </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Air Temperature (Celsius)</th>
+                <th>Wind From Direction (Degrees)</th>
+                <th>Wind Speed (m/s)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% times.forEach(item => { %>
+                <tr>
+                    <td><%= item.time %></td>
+                    <td><%= item.data.instant.details.air_temperature %></td>
+                    <td><%= item.data.instant.details.wind_from_direction %></td>
+                    <td><%= item.data.instant.details.wind_speed %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    
 </body>
 </html>

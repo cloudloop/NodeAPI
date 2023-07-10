@@ -40,15 +40,16 @@ app.get('/api/weather/latlon/:lat/:lon', async (req, res) => {
         const { lat, lon } = req.params;
         const weatherData = await fetchWeatherData(lat, lon);
         if (weatherData) {
-            let response = { latitude: lat, longitude: lon, weatherData };
-            res.render('weather_index', { times: response.data.weatherData.properties.timeseries, response: response.data  });
-            //res.json({ latitude: lat, longitude: lon, weatherData });
+            res.render('weather_index', { times: weatherData.properties.timeseries, response: weatherData });
         } else  {
+            console.error('No weather data returned');
             res.status(500).json({ message: 'Error fetching weather data' });
         }
     } catch (error) {
+        console.error('Error processing weather data:', error);
         res.status(500).json({ message: 'Error fetching weather data', error: error.message });
     }
+    
 });
 
 app.get('/api/weather/place/:place', async (req, res) => {
@@ -72,8 +73,7 @@ app.get('/api/weather/place/:place', async (req, res) => {
 
             const weatherData = await fetchWeatherData(lat, lon);
             if (weatherData) {
-                let response = { latitude: lat, longitude: lon, weatherData };
-                res.render('weather_index', { times: response.data.weatherData.properties.timeseries, response: response.data  });
+                res.render('weather_index', { times: weatherData.properties.timeseries, response: weatherData , place: place });
                 //res.json({ latitude: lat, longitude: lon, weatherData });
             } else {
                 res.status(500).json({ message: 'Error fetching weather data' });
