@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Remember to include Tailwind CSS -->
+    <link rel="stylesheet" type="text/css" href="/output.css">
+    <title>Adventurous Weather App</title>
+</head>
+<body class="bg-sky-blue text-stormy-grey min-h-screen">
+    <nav class="bg-deep-purple text-white p-4">
+        <!-- Navigation content here -->
+    </nav>
+    <main class="p-4">
+        <form id="location-form">
+            <!-- Input for location goes here -->
+        </form>
+        <section id="weather-info">
+            <!-- Weather info goes here -->
+            <h1>Weather Information <%= response.latitude %> <%= response.longitude %> (Place name) </h1>
+            <% times.forEach(item => { %>
+                <div class="weather-container">
+                    <h2>Time: <%= item.time %></h2>
+                    <p>Air Pressure at Sea Level: <%= item.data.instant.details.air_pressure_at_sea_level %> hPa</p>
+                    <p>Air Temperature: <%= item.data.instant.details.air_temperature %> Celsius</p>
+                    <p>Cloud Area Fraction: <%= item.data.instant.details.cloud_area_fraction %> %</p>
+                    <p>Relative Humidity: <%= item.data.instant.details.relative_humidity %> %</p>
+                    <p>Wind From Direction: <%= item.data.instant.details.wind_from_direction %> Degrees</p>
+                    <p>Wind Speed: <%= item.data.instant.details.wind_speed %> m/s</p>
+                </div>
+            <% }); %>
+        </section>
+        <div id="loading" class="hidden">
+            <!-- Loading spinner goes here -->
+            <div class="w-16 h-16 border-t-4 border-sunset-orange rounded-full animate-spin"></div>
+        </div>
+    </main>
+    <div id="error" class="hidden bg-sunset-orange text-white p-4">
+        Oops! Something went wrong.
+    </div>
+</body>
+</html>
