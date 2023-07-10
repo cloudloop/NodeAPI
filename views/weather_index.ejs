@@ -5,7 +5,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
     <link rel="stylesheet" href="/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <title>Adventurous Weather App</title>
 </head>
 <body class="bg-sky-blue text-stormy-grey min-h-screen">
@@ -16,6 +17,10 @@
         <form id="location-form">
             <!-- Input for location goes here -->
         </form>
+
+        <canvas id="temperatureChart"></canvas>
+
+
         <div class="container">
             <h1>Weather Information <%= response.latitude %> <%= response.longitude %> (Place name) </h1>
             <% times.forEach(item => { %>
@@ -59,6 +64,39 @@
         </tbody>
     </table>
 
+    
+
+    <script>
+        const chart = new Chart(
+            document.getElementById('temperatureChart'), {
+                type: 'line',
+                options: {
+                    animation: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    }
+                },
+                data: {
+                    labels: <%- JSON.stringify(times.map(item => item.time)) %>,
+                    datasets: [
+                    {
+                        label: 'Air temperature',
+                        data: <%- JSON.stringify(times.map(item => item.data.instant.details.air_temperature)) %>
+                    },
+                    {
+                        label: 'Wind speed',
+                        data: <%- JSON.stringify(times.map(item => item.data.instant.details.wind_speed)) %>
+                    }
+                    ]
+                }
+            }
+        )
+    </script>
     
 </body>
 </html>
