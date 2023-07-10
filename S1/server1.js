@@ -4,6 +4,11 @@ const axios = require('axios');
 const app = express();
 const port = 3000;
 
+
+
+// Set Express to pretty-print JSON
+app.set('json spaces', 2);
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 app.get('/api/greeting', (req, res) => {
