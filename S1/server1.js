@@ -40,6 +40,7 @@ app.get('/api/weather/latlon/:lat/:lon', async (req, res) => {
         const { lat, lon } = req.params;
         const weatherData = await fetchWeatherData(lat, lon);
         if (weatherData) {
+            let response = { latitude: lat, longitude: lon, weatherData };
             res.render('weather_index', { times: response.data.weatherData.properties.timeseries, response: response.data  });
             //res.json({ latitude: lat, longitude: lon, weatherData });
         } else  {
@@ -71,6 +72,7 @@ app.get('/api/weather/place/:place', async (req, res) => {
 
             const weatherData = await fetchWeatherData(lat, lon);
             if (weatherData) {
+                let response = { latitude: lat, longitude: lon, weatherData };
                 res.render('weather_index', { times: response.data.weatherData.properties.timeseries, response: response.data  });
                 //res.json({ latitude: lat, longitude: lon, weatherData });
             } else {
