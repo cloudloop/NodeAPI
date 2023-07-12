@@ -813,11 +813,6 @@ video {
   padding-top: 0.5rem;
 }
 
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
-}
-
 .text-base {
   font-size: 1rem;
   line-height: 1.5rem;
@@ -826,10 +821,6 @@ video {
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
-}
-
-.font-bold {
-  font-weight: 700;
 }
 
 .font-medium {
@@ -854,10 +845,6 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
-.underline {
-  text-decoration-line: underline;
 }
 
 .opacity-0 {
@@ -923,6 +910,12 @@ video {
 
 body {
   font-family: 'Roboto', sans-serif;
+  font-family: Roboto, sans-serif;
+}
+
+#Apex_chart {
+  max-width: 650px;
+  margin: 35px auto;
 }
 
 .hover\:bg-gray-700:hover {

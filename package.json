@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "apexcharts": "^3.41.0",
     "autoprefixer": "^10.4.14",
     "axios": "^1.4.0",
     "chart.js": "^4.3.0",
@@ -15,11 +16,11 @@
     "tailwindcss": "^3.3.2"
   },
   "scripts": {
-    "start": "node app.js",
-    "start1": "node S1/server1.js",
+    "start1": "node app.js",
+    "start": "node S1/server1.js",
     "dev1": "nodemon S1/server1.js",
     "dev2": "nodemon S2/server2.js",
     "build:css": "tailwindcss build public/styles.css -o public/output.css",
-    "build:css2": "npx tailwindcss -i ./public/styles.css -o ./dist/output.css --watch"
+    "build": "npx tailwindcss -i ./public/styles.css -o ./dist/output.css --watch"
   }
 }

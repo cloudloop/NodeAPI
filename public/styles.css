@@ -13,3 +13,14 @@
 body {
     font-family: 'Roboto', sans-serif;
 }
+
+@import url(https://fonts.googleapis.com/css?family=Roboto);
+
+body {
+  font-family: Roboto, sans-serif;
+}
+
+#chart {
+  max-width: 650px;
+  margin: 35px auto;
+}
