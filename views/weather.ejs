@@ -15,14 +15,15 @@
 
 <body class="bg-sky-blue text-stormy-grey min-h-screen">
 
-
-<%- include navbar.ejs %>
+    
     <nav class="bg-deep-purple text-white p-4">
         <!-- Navigation content here -->
+        <%- include('partials/navbar.ejs') %>
     </nav>
     <main class="p-4">
         <form id="location-form">
             <!-- Input for location goes here -->
+            <%- include('partials/Apexchart.ejs') %>
         </form>
 
         <canvas id="temperatureChart"></canvas>
@@ -37,7 +38,7 @@
                     <p>Air Temperature: <%= item.data.instant.details.air_temperature %> Celsius</p>
                     <p>Cloud Area Fraction: <%= item.data.instant.details.cloud_area_fraction %> %</p>
                     <p>Relative Humidity: <%= item.data.instant.details.relative_humidity %> %</p>
-                    <p>Winds: <img src="/arrow.png" style="width: 30px; height: 30px; transform: rotate(<%= item.data.instant.details.wind_from_direction + 90 %>deg);" alt="Wind direction"> <%= item.data.instant.details.wind_from_direction %>° @ <%= item.data.instant.details.wind_speed %> m/s</p>
+                    <p>Winds: <img src="/arrow.png" style="width: 30px; height: 30px;" alt="Wind direction"> <%= item.data.instant.details.wind_from_direction %>° @ <%= item.data.instant.details.wind_speed %> m/s</p>
                 </div>
             <% }); %>
         </div>
@@ -45,31 +46,28 @@
             <!-- Loading spinner goes here -->
             <div class="w-16 h-16 border-t-4 border-sunset-orange rounded-full animate-spin"></div>
         </div>
-    </main>
-    <div id="error" class="hidden bg-sunset-orange text-white p-4">
-        Oops! Something went wrong.
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Air Temperature (Celsius)</th>
-                <th>Wind From Direction (Degrees)</th>
-                <th>Wind Speed (m/s)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% times.forEach(item => { %>
+    
+    
+        <table>
+            <thead>
                 <tr>
-                    <td><%= item.time %></td>
-                    <td><%= item.data.instant.details.air_temperature %></td>
-                    <td><%= item.data.instant.details.wind_from_direction %></td>
-                    <td><%= item.data.instant.details.wind_speed %></td>
+                    <th>Time</th>
+                    <th>Air Temperature (Celsius)</th>
+                    <th>Wind From Direction (Degrees)</th>
+                    <th>Wind Speed (m/s)</th>
                 </tr>
-            <% }); %>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <% times.forEach(item => { %>
+                    <tr>
+                        <td><%= item.time %></td>
+                        <td><%= item.data.instant.details.air_temperature %></td>
+                        <td><%= item.data.instant.details.wind_from_direction %></td>
+                        <td><%= item.data.instant.details.wind_speed %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
 
     
 
