@@ -117,8 +117,6 @@ options.series[1].data = newWindRangeData;
 options.series[2].data = newTempData;
 options.series[3].data = newWindData;
 
-console.log(options)
-
 document.addEventListener('DOMContentLoaded', function() {
 var Origin_chart = document.querySelector("#Apex_chart")
 

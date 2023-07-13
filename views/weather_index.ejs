@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="/js.js"></script>
+    <link rel="stylesheet" href="/weather-icons-wind.min.css">
+    <link rel="stylesheet" href="/weather-icons.min.css">
 
 
     <title>Adventurous Weather App</title>
@@ -19,7 +21,10 @@
 <body class="bg-sky-blue text-stormy-grey min-h-screen">
 
   <%- include('partials/navbar.ejs') %>
+
   <%- include('partials/Apexchart.ejs') %>
+
+  <i class="wi wi-day-sunny"></i>
 
 
     <canvas id="temperatureChart"></canvas>
