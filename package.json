@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "apexcharts": "^3.41.0",
     "autoprefixer": "^10.4.14",
     "axios": "^1.4.0",
     "chart.js": "^4.3.0",
@@ -8,18 +9,19 @@
     "fs": "^0.0.1-security",
     "https": "^1.0.0",
     "path": "^0.12.7",
-    "postcss": "^8.4.25",
-    "tailwindcss": "^3.3.2"
+    "postcss": "^8.4.25"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "nodemon": "^3.0.1",
+    "tailwindcss": "^3.3.2"
   },
   "scripts": {
     "build": "node node_modules/build.js",
-    "start": "node app.js",
-    "start1": "node S1/server1.js",
+    "start1": "node app.js",
+    "start": "node S1/server1.js",
     "dev1": "nodemon S1/server1.js",
     "dev2": "nodemon S2/server2.js",
-    "build:css": "tailwindcss build public/styles.css -o public/output.css"
+    "build:css": "tailwindcss build public/styles.css -o public/output.css",
+    "build": "npx tailwindcss -i ./public/styles.css -o ./dist/output.css --watch"
   }
 }
