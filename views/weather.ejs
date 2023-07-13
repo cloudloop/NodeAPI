@@ -38,7 +38,7 @@
                     <p>Air Temperature: <%= item.data.instant.details.air_temperature %> Celsius</p>
                     <p>Cloud Area Fraction: <%= item.data.instant.details.cloud_area_fraction %> %</p>
                     <p>Relative Humidity: <%= item.data.instant.details.relative_humidity %> %</p>
-                    <p>Winds: <img src="/arrow.png" style="width: 30px; height: 30px;" alt="Wind direction"> <%= item.data.instant.details.wind_from_direction %>° @ <%= item.data.instant.details.wind_speed %> m/s</p>
+                    <p>Winds: <img src="/arrow.png" style="width: 30px; height: 30px; transform: rotate(<%= item.data.instant.details.wind_from_direction + 90 %>deg);" alt="Wind direction"> <%= item.data.instant.details.wind_from_direction %>° @ <%= item.data.instant.details.wind_speed %> m/s</p>
                 </div>
             <% }); %>
         </div>

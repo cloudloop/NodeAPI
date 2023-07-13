@@ -51,11 +51,26 @@ const fetchPlaceCoordinates = async (place) => {
     }
 };
 
+const fetchPlaceName = async (lat,lon) => {
+    const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
+    const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&zoom=13&format=json`, {
+        headers: {
+            'User-Agent': userAgent
+        }
+    });
+    if (response.data) {
+        return place = response.data.address.village
+    } else {
+        return null;
+    }
+};
+
 app.get('/api/weatherdata/latlon/:lat/:lon', async (req, res) => {
     const { lat, lon } = req.params;
     const weatherData = await fetchWeatherData(lat, lon);
     if (weatherData) {
-        res.json(weatherData);
+        let place = await fetchPlaceName(lat, lon);
+        res.json({placeName: place, latitude: lat, longitude: lon, weatherData});
     } else {
         res.status(500).json({ message: 'Error fetching weather data' });
     }
@@ -70,7 +85,7 @@ app.get('/api/weatherdata/place/:place', async (req, res) => {
     if (coordinates) {
         const weatherData = await fetchWeatherData(coordinates.lat, coordinates.lon);
         if (weatherData) {
-            res.json({ latitude: coordinates.lat, longitude: coordinates.lon, weatherData });
+            res.json({ placeName: place, latitude: coordinates.lat, longitude: coordinates.lon, weatherData });
         } else {
             res.status(500).json({ message: 'Error fetching weather data' });
         }

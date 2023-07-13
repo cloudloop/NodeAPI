@@ -20,7 +20,6 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
 app.get('/api/call-server1', async (req, res) => {
     try {
         const response = await axios.get('http://localhost:3000/api/weatherdata/place/Stockholm');
-        console.log(response);
         res.render('weather', { times: response.data.weatherData.properties.timeseries, response: response.data.weatherData });
     } catch (error) {
         console.error(error);
