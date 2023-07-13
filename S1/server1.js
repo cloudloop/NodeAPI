@@ -35,71 +35,72 @@ const fetchWeatherData = async (lat, lon) => {
     }
 };
 
-app.get('/api/weather/latlon/:lat/:lon', async (req, res) => {
-    try {
-        const { lat, lon } = req.params;
-        const weatherData = await fetchWeatherData(lat, lon);
+const fetchPlaceCoordinates = async (place) => {
+    const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
+    const response = await axios.get(`https://nominatim.openstreetmap.org/search?city=${place}&format=json`, {
+        headers: {
+            'User-Agent': userAgent
+        }
+    });
+    if (response.data && response.data.length > 0) {
+        let lat = parseFloat(response.data[0].lat).toFixed(2);
+        let lon = parseFloat(response.data[0].lon).toFixed(2);
+        return { lat, lon };
+    } else {
+        return null;
+    }
+};
+
+app.get('/api/weatherdata/latlon/:lat/:lon', async (req, res) => {
+    const { lat, lon } = req.params;
+    const weatherData = await fetchWeatherData(lat, lon);
+    if (weatherData) {
+        res.json(weatherData);
+    } else {
+        res.status(500).json({ message: 'Error fetching weather data' });
+    }
+});
+
+app.get('/api/weatherdata/place/:place', async (req, res) => {
+    let place = req.params.place;
+    if (place == "Schweitzerbadet") {
+        place = "Dalarö"
+    }
+    const coordinates = await fetchPlaceCoordinates(place);
+    if (coordinates) {
+        const weatherData = await fetchWeatherData(coordinates.lat, coordinates.lon);
         if (weatherData) {
-            res.render('weather_index', { times: weatherData.properties.timeseries, response: weatherData });
-        } else  {
-            console.error('No weather data returned');
+            res.json({ latitude: coordinates.lat, longitude: coordinates.lon, weatherData });
+        } else {
             res.status(500).json({ message: 'Error fetching weather data' });
         }
-    } catch (error) {
-        console.error('Error processing weather data:', error);
-        res.status(500).json({ message: 'Error fetching weather data', error: error.message });
+    } else {
+        res.status(404).json({ message: 'No results found' });
     }
-    
+});
+
+app.get('/api/weather/latlon/:lat/:lon', async (req, res) => {
+    const { lat, lon } = req.params;
+    const weatherData = await fetchWeatherData(lat, lon);
+    if (weatherData) {
+        res.render('weather_index', { times: weatherData.properties.timeseries, response: weatherData });
+    } else {
+        res.status(500).json({ message: 'Error fetching weather data' });
+    }
 });
 
 app.get('/api/weather/place/:place', async (req, res) => {
-    
-    try {
-        let place = req.params.place;
-        if (place == "Schweitzerbadet") {
-            place = "Dalarö"
-        }
-        const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
-
-        const response = await axios.get(`https://nominatim.openstreetmap.org/search?city=${place}&format=json`, {
-            headers: {
-                'User-Agent': userAgent
-            }
-        });
-
-        if (response.data && response.data.length > 0) {
-            let lat = parseFloat(response.data[0].lat).toFixed(2);
-            let lon = parseFloat(response.data[0].lon).toFixed(2);
-
-            const weatherData = await fetchWeatherData(lat, lon);
-            if (weatherData) {
-                res.render('weather_index', { times: weatherData.properties.timeseries, response: weatherData , place: place });
-                //res.json({ latitude: lat, longitude: lon, weatherData });
-            } else {
-                res.status(500).json({ message: 'Error fetching weather data' });
-            }
+    const { place } = req.params;
+    const coordinates = await fetchPlaceCoordinates(place);
+    if (coordinates) {
+        const weatherData = await fetchWeatherData(coordinates.lat, coordinates.lon);
+        if (weatherData) {
+            res.render('weather_index', { times: weatherData.properties.timeseries, response: weatherData , place: place });
         } else {
-            //try {
-                // console.log(`${place}`)
-                // console.log(`${userAgent}`)
-                // const response2 = await axios.get(`https://nominatim.openstreetmap.org/search?amenity=${place}&format=json`, {
-                //     headers: {
-                //         'User-Agent': userAgent
-                //     }
-                // });
-                // console.log(response2.data)
-                // //if (response2.data && response2.data.length > 0) {
-                //     console.log(response2.data)
-                //     let lat = parseFloat(response2.data[0].lat).toFixed(2);
-                //     let lon = parseFloat(response2.data[0].lon).toFixed(2);
-                    //const weatherData = await fetchWeatherData(lat, lon);
-            //}
-            //catch (e) {
-            res.status(404).json({ message: 'No results found' });
+            res.status(500).json({ message: 'Error fetching weather data' });
         }
-        //}
-    } catch (error) {
-        res.status(500).json({ message: 'Error fetching geocoding data', error: error.message });
+    } else {
+        res.status(404).json({ message: 'No results found' });
     }
 });
 
