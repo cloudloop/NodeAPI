@@ -187,7 +187,7 @@
                     {
                         label: 'Air temperature',
                         data: <%- JSON.stringify(times.map(item => item.data.instant.details.air_temperature)) %>
-                    },
+                    }, 
                     {
                         label: 'Wind speed',
                         data: <%- JSON.stringify(times.map(item => item.data.instant.details.wind_speed)) %>
@@ -197,6 +197,5 @@
             }
         )
     </script>
-    
 </body>
 </html>
