@@ -17,12 +17,12 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 app.get('/api/call-server1', async (req, res) => {
     try {
-        const response = await axios.get('http://localhost:3000/api/weather/place/Stockholm');
+        const response = await axios.get('http://localhost:3000/api/weather/latlon/10/10');
         // console.log(response.data.weatherData.properties.timeseries);
-        // res.json({ message: 'Received from Server 1:', data: response.data });
+        res.json({ message: 'Received from Server 1:', data: response.data });
 
         // Render the EJS template with the data
-        res.render('weather_index', { times: response.data.weatherData.properties.timeseries, response: response.data  });
+        res.render('weather', { times: response.data.weatherData.properties.timeseries  });
 
     } catch (error) {
         res.status(500).json({ message: 'Error calling Server 1', error: error.response.data });

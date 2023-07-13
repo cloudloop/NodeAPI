@@ -15,6 +15,7 @@
     "nodemon": "^3.0.1"
   },
   "scripts": {
+    "build": "node node_modules/build.js",
     "start": "node app.js",
     "start1": "node S1/server1.js",
     "dev1": "nodemon S1/server1.js",
