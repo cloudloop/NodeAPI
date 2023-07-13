@@ -14,18 +14,22 @@ app.set('view engine', 'ejs');
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, '../public')));
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+
 
 app.get('/api/call-server1', async (req, res) => {
     try {
-        const response = await axios.get('http://localhost:3000/api/weather/latlon/10/10');
+        const response = await axios.get('http://localhost:3000/api/weather/place/Stockholm');
         // console.log(response.data.weatherData.properties.timeseries);
-        res.json({ message: 'Received from Server 1:', data: response.data });
+        //res.json({ message: 'Received from Server 1:', data: response.data });
+
+        console.log(response)
 
         // Render the EJS template with the data
-        res.render('weather', { times: response.data.weatherData.properties.timeseries  });
+        //res.render('weather', { times: response.data.weatherData.properties.timeseries  });
 
     } catch (error) {
-        res.status(500).json({ message: 'Error calling Server 1', error: error.response.data });
+        res.status(500).json({ message: 'Error calling Server 1', });//error: error.response.data });
     }
 });
 
