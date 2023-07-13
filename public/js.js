@@ -1,38 +1,129 @@
+// Assuming the existing options object
 var options = {
     chart: {
-      type: 'line'
+      toolbar: false,
+      type: 'rangeArea',
+      height: 350,
+      animations: {
+        speed: 200
+      }
+    },
+    colors: ['#d4526e', '#33b2df', '#d4526e', '#33b2df'],
+    dataLabels: {
+      enabled: false
+    },
+    fill: {
+      opacity: [0.24, 0.24, 1, 1]
+    },
+    stroke: {
+      curve: 'straight',
+      width: [0, 0, 2, 2]
     },
     series: [{
-      name: 'Wind Direction',
-      data: [30,40,45,50,49,60,70,91,125]
+      type: 'rangeArea',
+      name: 'tempRange',
+      data: []
     }, {
-      name: 'Temperatur',
-      data: [12,10,15,20,22,24,20,17,15]
+      type: 'rangeArea',
+      name: 'windRange',
+      data: []
+    }, {
+      type: 'line',
+      name: 'temp',
+      data: []
+    }, {
+      type: 'line',
+      name: 'wind',
+      data: []
     }],
-    xaxis: {
-      categories: [1991,1992,1993,1994,1995,1996,1997,1998,1999],
-    },
-    yaxis: [
-        {
-            title: {
-              text: "Wind Direction"
-            },
-          },
-          {
-            opposite: true,
-            title: {
-              text: "Temperature"
-            }
+    yaxis: [{
+      seriesName: 'temp',
+      min: 0,
+      max: 40,
+      title: {
+        text: "Temp",
+        style: {
+          color: '#d4526e'
+        }
+        },
+      axisBorder: {
+          show: true,
+          color: '#d4526e'
+        },
+        labels: {
+          style: {
+            colors: '#d4526e',
           }
-        ],
-  }
+        },
+      }, {
+        seriesName: 'wind',
+        min: 0,
+        max: 240,
+        opposite: true,
+        axisTicks: {
+          show: true,
+        },
+        axisBorder: {
+          show: true,
+          color: '#33b2df'
+        },
+        labels: {
+          style: {
+            colors: '#33b2df',
+          }
+        },
+        title: {
+          text: "Wind",
+          style: {
+            color: '#33b2df',
+          }
+        }
+        },{
+          show: false
+        },{
+          show: false
+        }]}
+
   
 
-  document.addEventListener('DOMContentLoaded', function() {
-  var Origin_chart = document.querySelector("#Apex_chart")
+const x = [1991,1992,1993,1994,1995,1996,1997,1998,1999];
+const wind = [130,140,145,150,149,160,170,191,125];
+const temp = [12,10,15,20,22,24,20,17,15];
+const windRange = [160,200]
+const tempRange = [10,15]
 
-  if (Origin_chart) {
-    const Apex_chart = new ApexCharts(document.querySelector("#Apex_chart"), options);
-    Apex_chart.render();
-  }
-  });
+const newTempData = x.map( (x, index) => {
+  let newArray = {x: x, y: temp[index]};
+  return newArray;
+});
+
+const newWindData = x.map( (x, index) => {
+    let newArray = {x: x, y: wind[index]};
+    return newArray;
+});
+
+const newWindRangeData = x.map( (x) => {
+  let newArray = {x: x, y: windRange};
+  return newArray;
+});
+
+const newTempRangeData = x.map( (x) => {
+  let newArray = {x: x, y: tempRange};
+  return newArray;
+});
+
+options.series[0].data = newTempRangeData;
+options.series[1].data = newWindRangeData;
+options.series[2].data = newTempData;
+options.series[3].data = newWindData;
+
+console.log(options)
+
+document.addEventListener('DOMContentLoaded', function() {
+var Origin_chart = document.querySelector("#Apex_chart")
+
+if (Origin_chart) {
+  const Apex_chart = new ApexCharts(document.querySelector("#Apex_chart"), options);
+  Apex_chart.render();
+}
+});
