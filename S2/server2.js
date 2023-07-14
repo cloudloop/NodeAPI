@@ -1,6 +1,36 @@
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
+// const fbConfig = require('../firebaseConfig');
+
+// // Import the functions you need from the SDKs you need
+// // TODO: Add SDKs for Firebase products that you want to use
+// // https://firebase.google.com/docs/web/setup#available-libraries
+// const firebase = require("firebase/app");
+// const initializeApp = firebase.initializeApp;
+
+// const firebaseAuth = require("firebase/auth");
+// const getAuth = firebaseAuth.getAuth;
+
+// const firebaseDatabase = require("firebase/database");
+// const getDatabase = firebaseDatabase.getDatabase;
+
+
+// // Your web app's Firebase configuration
+// // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+// const firebaseConfig = {
+//   apiKey: fbConfig.apiKey,
+//   authDomain: fbConfig.authDomain,
+//   projectId: fbConfig.projectId,
+//   storageBucket: fbConfig.storageBucket,
+//   messagingSenderId: fbConfig.messagingSenderId,
+//   appId: fbConfig.appId,
+//   measurementId: fbConfig.measurementId
+// };
+
+// // Initialize Firebase
+// const fb = initializeApp(firebaseConfig);
+// const auth = getAuth(fb);
 
 const app = express();
 const port = 4000;
