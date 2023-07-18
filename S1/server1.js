@@ -51,6 +51,9 @@ const firebaseConfig = {
 const FBapp = initializeApp(firebaseConfig);
 //const analytics.isSupported() = getAnalytics(FBapp);
 const db = getFirestore(FBapp);
+
+
+
 async function writeData(PlaceName, data) {
     console.log('writeData function called');
 
@@ -102,13 +105,11 @@ const fetchPlaceName = async (lat,lon) => {
 };
 
 const checkExistingData = async (place) => {
-    const placeName = place;
-    console.log(`checkData function called for place ${placeName}`);
-
+    console.log(`checkData function called for place ${place}`);
     const w2Ref = collection(db,firebaseConfig.fireStoreCollection)
 
     // Get documents where 'place' is 'PlaceName' and order by 'latestUpdate' in descending order
-    const q = await query(w2Ref, where("place","==",placeName),orderBy("latestUpdate", "desc"),limit(1))
+    const q = await query(w2Ref, where("place","==",place),orderBy("latestUpdate", "desc"),limit(1))
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
@@ -119,7 +120,7 @@ const checkExistingData = async (place) => {
         console.log(`${data.place} data is begin analyzed`)
 
         // Get the current time
-        const currentTime = new Date();
+        const currentTime = new Date(Date.now());
 
         // Calculate the time difference in hours
         const timeDiff = Math.abs(currentTime - data.latestUpdate.toDate()) / 3600000;
@@ -129,7 +130,7 @@ const checkExistingData = async (place) => {
             return false;
         } else {
             console.log('Data is less than 1 hour old');
-            return true;
+            return data;
         }
     } else {
         console.log('No data found for this place');
@@ -137,13 +138,11 @@ const checkExistingData = async (place) => {
     }
 };
 
-const fetchWeatherData = async (lat, lon) => {
-    let place = await fetchPlaceName(lat, lon);
-    let check = await checkExistingData(place);
-    console.log(`Checking weather data ${check}`)
+const fetchWeatherData = async (place, lat, lon) => {
+    console.log(`Checking weather data for ${place}`);
+    let data = await checkExistingData(place);
 
-    if (!check) {
-
+    if (data === false) {
         const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
         try {
             const response = await axios.get(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`, {
@@ -151,14 +150,20 @@ const fetchWeatherData = async (lat, lon) => {
                     'User-Agent': userAgent
                 }
             });
-            return response.data;
+            await writeData(place, response.data);
+            let Weatherdata = response.data;
+            data = {Weatherdata};
+            console.log("Data has be retreived by API call");
         } catch (error) {
             console.error('Error fetching weather data:', error.message);
-            return null;
         }
     } else {
-        console.log("loading existing data from DB...")
-    }};
+        console.log("Loading existing data from DB...");
+    }
+
+    console.log("Returning weather data...");
+    return data;
+};
 
 const fetchPlaceCoordinates = async (place) => {
     const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
@@ -178,7 +183,8 @@ const fetchPlaceCoordinates = async (place) => {
 
 app.get('/api/weatherdata/latlon/:lat/:lon', async (req, res) => {
     const { lat, lon } = req.params;
-    const weatherData = await fetchWeatherData(lat, lon);
+    let place = fetchPlaceName(lat, lon);
+    const weatherData = await fetchWeatherData(place,lat, lon);
     if (weatherData) {
         let place = await fetchPlaceName(lat, lon);
         res.json({placeName: place, latitude: lat, longitude: lon, weatherData});
@@ -194,9 +200,8 @@ app.get('/api/weatherdata/place/:place', async (req, res) => {
     }
     const coordinates = await fetchPlaceCoordinates(place);
     if (coordinates) {
-        const weatherData = await fetchWeatherData(coordinates.lat, coordinates.lon);
+        const weatherData = await fetchWeatherData(place, coordinates.lat, coordinates.lon);
         if (weatherData) {
-            writeData(place, weatherData);
             res.json({ placeName: place, latitude: coordinates.lat, longitude: coordinates.lon, weatherData });
         } else {
             res.status(500).json({ message: 'Error fetching weather data' });
@@ -208,9 +213,10 @@ app.get('/api/weatherdata/place/:place', async (req, res) => {
 
 app.get('/api/weather/latlon/:lat/:lon', async (req, res) => {
     const { lat, lon } = req.params;
-    const weatherData = await fetchWeatherData(lat, lon);
-    if (weatherData) {
-        res.render('weather_index', { times: weatherData.properties.timeseries, response: weatherData });
+    let place = fetchPlaceName(lat, lon);
+    const data = await fetchWeatherData(place, lat, lon);
+    if (data) {
+        res.render('weather_index', { times: data.weatherData.properties.timeseries, place: place });
     } else {
         res.status(500).json({ message: 'Error fetching weather data' });
     }
@@ -220,9 +226,9 @@ app.get('/api/weather/place/:place', async (req, res) => {
     const { place } = req.params;
     const coordinates = await fetchPlaceCoordinates(place);
     if (coordinates) {
-        const weatherData = await fetchWeatherData(coordinates.lat, coordinates.lon);
-        if (weatherData) {
-            res.render('weather_index', { times: weatherData.properties.timeseries, response: weatherData , place: place });
+        const data = await fetchWeatherData(place, coordinates.lat, coordinates.lon);
+        if (data) {
+            res.render('weather_index', { times: data.Weatherdata.properties.timeseries, place: place });
         } else {
             res.status(500).json({ message: 'Error fetching weather data' });
         }
