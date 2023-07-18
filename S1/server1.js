@@ -16,13 +16,17 @@ app.set('view engine', 'ejs');
 app.set('json spaces', 2);
 //Supress the https warning
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// Increase number of event listeners
+import EventEmitter from 'events';
+EventEmitter.defaultMaxListeners = 20;
+
 
 
 // Firebase initialization
 // Firebase compat packages are API compatible with namespaced code
 import {initializeApp} from 'firebase/app';
 import {getAuth} from 'firebase/auth';
-import {getFirestore, collection, addDoc, setDoc} from 'firebase/firestore';
+import {getFirestore, collection, addDoc, getDocs, query, where, orderBy, limit, Timestamp} from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
 import { write } from 'fs';
 // TODO: Add SDKs for Firebase products that you want to use
@@ -39,7 +43,8 @@ const firebaseConfig = {
   messagingSenderId: "320809676319",
   appId: "1:320809676319:web:2926b3d4adba188c876f2a",
   measurementId: "G-CGBLL2J1LF",
-  databaseURL: "https://kiteweather-d40b6-default-rtdb.europe-west1.firebasedatabase.app/"
+  databaseURL: "https://kiteweather-d40b6-default-rtdb.europe-west1.firebasedatabase.app/",
+  fireStoreCollection: "weather"
 };
 
 // Initialize Firebase
@@ -49,9 +54,13 @@ const db = getFirestore(FBapp);
 async function writeData(PlaceName, data) {
     console.log('writeData function called');
 
+    // Convert date string to Firestore Timestamp
+    let date = new Date(data.properties.meta.updated_at);
+    let timestamp = Timestamp.fromDate(date);
+
     const postData = {
         place: PlaceName,
-        latestUpdate: data.properties.meta.updated_at,
+        latestUpdate: timestamp,
         Weatherdata : data
     };
     // try {
@@ -62,7 +71,7 @@ async function writeData(PlaceName, data) {
     // } catch (error) {
     //   console.log(`Overwriting failed. Creating new document...`);
     try {
-    await addDoc(collection(db, 'w2'), postData);
+    await addDoc(collection(db, firebaseConfig.fireStoreCollection), postData);
     console.log("Created new document in the database ...");
     console.log(postData);
     } catch (error) {
@@ -77,20 +86,79 @@ app.get('/api/greeting', (req, res) => {
     res.json({ message: 'Hello from Server 1!' });
 });
 
-const fetchWeatherData = async (lat, lon) => {
+const fetchPlaceName = async (lat,lon) => {
     const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
-    try {
-        const response = await axios.get(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`, {
-            headers: {
-                'User-Agent': userAgent
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching weather data:', error.message);
+    const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&zoom=12&format=json`, {
+        headers: {
+            'User-Agent': userAgent
+        }
+    });
+    let place = "";
+    if (response.data) {
+        return place = response.data.address[Object.keys(response.data.address)[0]];
+    } else {
         return null;
     }
 };
+
+const checkExistingData = async (place) => {
+    const placeName = place;
+    console.log(`checkData function called for place ${placeName}`);
+
+    const w2Ref = collection(db,firebaseConfig.fireStoreCollection)
+
+    // Get documents where 'place' is 'PlaceName' and order by 'latestUpdate' in descending order
+    const q = await query(w2Ref, where("place","==",placeName),orderBy("latestUpdate", "desc"),limit(1))
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+        // Get the first (and only) document
+        const doc = querySnapshot.docs[0];
+        const data = doc.data();
+
+        console.log(`${data.place} data is begin analyzed`)
+
+        // Get the current time
+        const currentTime = new Date();
+
+        // Calculate the time difference in hours
+        const timeDiff = Math.abs(currentTime - data.latestUpdate.toDate()) / 3600000;
+
+        if (timeDiff > 1) {
+            console.log('Data is more than 1 hour old');
+            return false;
+        } else {
+            console.log('Data is less than 1 hour old');
+            return true;
+        }
+    } else {
+        console.log('No data found for this place');
+        return false;
+    }
+};
+
+const fetchWeatherData = async (lat, lon) => {
+    let place = await fetchPlaceName(lat, lon);
+    let check = await checkExistingData(place);
+    console.log(`Checking weather data ${check}`)
+
+    if (!check) {
+
+        const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
+        try {
+            const response = await axios.get(`https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat}&lon=${lon}`, {
+                headers: {
+                    'User-Agent': userAgent
+                }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching weather data:', error.message);
+            return null;
+        }
+    } else {
+        console.log("loading existing data from DB...")
+    }};
 
 const fetchPlaceCoordinates = async (place) => {
     const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
@@ -103,20 +171,6 @@ const fetchPlaceCoordinates = async (place) => {
         let lat = parseFloat(response.data[0].lat).toFixed(2);
         let lon = parseFloat(response.data[0].lon).toFixed(2);
         return { lat, lon };
-    } else {
-        return null;
-    }
-};
-
-const fetchPlaceName = async (lat,lon) => {
-    const userAgent = 'nodeAPI-project https://github.com/cloudloop/NodeAPI';
-    const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&zoom=13&format=json`, {
-        headers: {
-            'User-Agent': userAgent
-        }
-    });
-    if (response.data) {
-        return place = response.data.address.village
     } else {
         return null;
     }
