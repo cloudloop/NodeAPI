@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="/js.js"></script>
     <link rel="stylesheet" href="/weather-icons-wind.min.css">
     <link rel="stylesheet" href="/weather-icons.min.css">
 
@@ -22,7 +21,7 @@
 
   <%- include('partials/navbar.ejs') %>
 
-  <%- include('partials/Apexchart.ejs') %>
+  <%- include('partials/Apexchart.ejs', {data: times}) %>
 
   <i class="wi wi-day-sunny"></i>
 
@@ -103,5 +102,6 @@
             }
         )
     </script>
+    <script src="/js.js" defer></script>
 </body>
 </html>

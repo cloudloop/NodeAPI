@@ -5,12 +5,16 @@
     <link rel="stylesheet" href="/output.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="/js.js"></script>
 
 
     <title>Adventurous Weather App</title>
 </head>
 <body>
     <div id="Apex_chart"></div>
+    <script>
+        window.chartData = <%- JSON.stringify(data) %>;
+    </script>
+     <script src="/js.js" defer></script>
 </body>
+
 </html>

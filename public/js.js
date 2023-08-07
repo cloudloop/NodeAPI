@@ -84,13 +84,29 @@ var options = {
           show: false
         }]}
 
-  
 
-const x = [1991,1992,1993,1994,1995,1996,1997,1998,1999];
-const wind = [130,140,145,150,149,160,170,191,125];
-const temp = [12,10,15,20,22,24,20,17,15];
+timeSeriesData = window.chartData;
+timeArray = new Array;
+timeSeriesData.forEach((entry) => {
+  timeArray.push(entry["time"])
+});
+console.log(timeSeriesData);
+
+windArray = new Array;
+timeSeriesData.forEach((entry) => {
+  windArray.push(entry["data"]["instant"]["details"]["wind_speed"]);
+});
+
+windDirectionArray = new Array;
+timeSeriesData.forEach((entry) => {
+  windDirectionArray.push(entry["data"]["instant"]["details"]["wind_from_direction"]);
+});
+
+const x = timeArray;
+const wind = windArray;
+const temp = windDirectionArray;
 const windRange = [160,200]
-const tempRange = [10,15]
+const tempRange = [7,11]
 
 const newTempData = x.map( (x, index) => {
   let newArray = {x: x, y: temp[index]};
@@ -119,6 +135,7 @@ options.series[3].data = newWindData;
 
 document.addEventListener('DOMContentLoaded', function() {
 var Origin_chart = document.querySelector("#Apex_chart")
+
 
 if (Origin_chart) {
   const Apex_chart = new ApexCharts(document.querySelector("#Apex_chart"), options);
